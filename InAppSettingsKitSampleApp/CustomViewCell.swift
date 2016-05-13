@@ -9,16 +9,20 @@
 import Foundation
 
 
-class CustomViewCell: UITableViewCell
+public class CustomViewCell: UITableViewCell
 {
     @IBOutlet weak var textView: UITextView?
 
-    func initWithStyle(style: UITableViewCellStyle, reuseIdentifier: String) -> AnyObject
+    override public init(style: UITableViewCellStyle, reuseIdentifier: String?)
     {
-        return self
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
     
-    override func setSelected(selected: CBool, animated: CBool)
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override public func setSelected(selected: CBool, animated: CBool)
     {
         
     }
