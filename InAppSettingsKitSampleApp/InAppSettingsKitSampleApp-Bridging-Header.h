@@ -10,7 +10,7 @@
 #import "IASKSettingsReader.h"
 #endif
 
-#import "CustomViewCell.h"
+//#import "CustomViewCell.h"
 
 #if USES_IASK_STATIC_LIBRARY
 #import "InAppSettingsKit/IASKAppSettingsViewController.h"

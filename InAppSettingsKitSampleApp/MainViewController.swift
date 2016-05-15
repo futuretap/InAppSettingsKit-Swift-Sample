@@ -30,21 +30,21 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     
     @IBAction func showSettingsModal(sender: UIButton)
     {
-        var aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController);
+        let aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController);
         self.appSettingsViewController.showDoneButton = true;
         self.presentViewController(aNavController, animated: true, completion: nil);
     }
     
     func showSettingsPopover(sender: AnyObject)
     {
-        if let result = self.currentPopoverController
+        if self.currentPopoverController != nil
         {
             dismissCurrentPopover();
             return;
         }
         
         self.appSettingsViewController.showDoneButton = false;
-        var aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController);
+        let aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController);
         var popover: UIPopoverController? = nil
         popover = UIPopoverController(contentViewController: aNavController)
         popover!.delegate = self
@@ -54,20 +54,20 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     
     override internal func awakeFromNib()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "settingDidChange:", name: kIASKAppSettingChanged, object: nil)
-        var enabled : [Bool]? = NSUserDefaults.standardUserDefaults().objectForKey("AutoConnect") as? [Bool]
-        if self.tabAppSettingsViewController.hiddenKeys == enabled
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MainViewController.settingDidChange(_:)), name: kIASKAppSettingChanged, object: nil)
+        let enabled = NSUserDefaults.standardUserDefaults().boolForKey("AutoConnect")
+        if enabled
         {
             self.tabAppSettingsViewController.hiddenKeys = nil
         }
         else
         {
-            self.tabAppSettingsViewController.hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"])
+            self.tabAppSettingsViewController.hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
         }
 
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad
         {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("method"))
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(MainViewController.showSettingsPopover(_:)))
         }
     }
 
@@ -102,7 +102,7 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     
     func settingsViewController(settingsViewController: IASKViewController, tableView: UITableView!, heightForHeaderForSection section: Int) -> CGFloat
     {
-        var key:String = settingsViewController.settingsReader.keyForSection(section);
+        let key:String = settingsViewController.settingsReader.keyForSection(section);
         
         if key == "IASKLogo"
         {
@@ -120,7 +120,7 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
 
     func settingsViewController(settingsViewController: IASKViewController, tableView: UITableView!, viewForHeaderForSection section: Int) -> UIView!
     {
-        var key:String = settingsViewController.settingsReader.keyForSection(section);
+        let key:String = settingsViewController.settingsReader.keyForSection(section);
         if key == "IASKLogo"
         {
             let imageName = "Icon.png"
@@ -131,7 +131,7 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
         }
         else if key == "IASKCustomHeaderStyle"
         {
-            var label = UILabel(frame: CGRectZero)
+            let label = UILabel(frame: CGRectZero)
             label.backgroundColor = UIColor.clearColor()
             label.textAlignment = NSTextAlignment.Center
             label.textColor = UIColor.redColor()
@@ -164,9 +164,9 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     func tableView(tableView: UITableView!, cellForSpecifier specifier: IASKSpecifier!) -> UITableViewCell!
     {
         let CellID : NSString = "CustomViewCell"
-        var cell : CustomViewCell = tableView.dequeueReusableCellWithIdentifier(CellID) as CustomViewCell
+        let cell : CustomViewCell = tableView.dequeueReusableCellWithIdentifier(CellID as String) as! CustomViewCell
         
-        var txt : [String]? = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
+        let txt : [String]? = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
             
         if  txt != nil
         {
@@ -185,26 +185,25 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     
     func settingDidChange(notification: NSNotification!)
     {
-        var txt: String? = notification.object?.description
-        if txt == "AutoConnect"
+        if notification.object?.description == "AutoConnect"
         {
             let activeController:IASKAppSettingsViewController = (self.tabBarController?.selectedIndex != nil) ?
                 self.tabAppSettingsViewController : self.appSettingsViewController
-            var enabled : [Bool]? = NSUserDefaults.standardUserDefaults().objectForKey("AutoConnect") as? [Bool]
-            if self.tabAppSettingsViewController.hiddenKeys == enabled
+            let enabled = NSUserDefaults.standardUserDefaults().objectForKey("AutoConnect") as? Bool
+            if ( (enabled != nil) && enabled!)
             {
-                self.tabAppSettingsViewController.hiddenKeys = nil
+                activeController.hiddenKeys = nil
             }
             else
             {
-                self.tabAppSettingsViewController.hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"])
+                activeController.hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
             }
         }
     }
     
     
 // MARK: - UITextViewDelegate (for CustomViewCell)
-    func textViewDidChange(textView: UITextView!)
+    func textViewDidChange(textView: UITextView)
     {
         NSUserDefaults.standardUserDefaults().setObject(textView.text, forKey: "customCell")
         NSNotificationCenter.defaultCenter().postNotificationName(kIASKAppSettingChanged, object:"customCell", userInfo:nil)
@@ -212,7 +211,7 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     
 
 // MARK: - UIPopoverControllerDelegate
-    func popoverControllerDidDismissPopover(popoverController: UIPopoverController!)
+    func popoverControllerDidDismissPopover(popoverController: UIPopoverController)
     {
         self.currentPopoverController = nil
     }
@@ -223,13 +222,13 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     {
         if specifier.key() == "ButtonDemoAction1"
         {
-            var alert = UIAlertController(title: "Demo Action 1 called", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+            let alert = UIAlertController(title: "Demo Action 1 called", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
             self.presentViewController(alert, animated: true, completion: nil)
         }
         else if specifier.key() == "ButtonDemoAction2"
         {
-            var newTitle = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
+            let newTitle = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
             if newTitle?.description == "Logout"
             {
                 NSUserDefaults.standardUserDefaults().setObject("Login", forKey: specifier.key())
