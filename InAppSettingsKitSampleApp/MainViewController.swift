@@ -10,7 +10,7 @@ import Foundation
 
 
 
-class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControllerDelegate,IASKSettingsDelegate
+class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControllerDelegate, IASKSettingsDelegate
 {
     
     func appSettingsViewController() -> IASKAppSettingsViewController {
@@ -80,14 +80,14 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
         {
             self.tabAppSettingsViewController().hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
         }
-
+        
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad
         {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(MainViewController.showSettingsPopover(_:)))
         }
     }
-
-// MARK:View Lifecycle
+    
+    // MARK:View Lifecycle
     override func viewWillDisappear(animated:Bool)
     {
         if (self.currentPopoverController != nil)
@@ -102,8 +102,8 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
         self.currentPopoverController?.dismissPopoverAnimated(true);
         self.currentPopoverController = nil;
     }
-
-// MARK: IASKAppSettingsViewControllerDelegate protocol
+    
+    // MARK: IASKAppSettingsViewControllerDelegate protocol
     func settingsViewControllerDidEnd(sender:IASKAppSettingsViewController)
     {
         self.dismissViewControllerAnimated(true, completion: nil)
@@ -114,7 +114,7 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
     
-// MARK: - Table View
+    // MARK: - Table View
     
     func settingsViewController(settingsViewController: IASKViewController, tableView: UITableView!, heightForHeaderForSection section: Int) -> CGFloat
     {
@@ -133,10 +133,10 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
             return 0;
         }
     }
-
+    
     func settingsViewController(settingsViewController: IASKViewController, tableView: UITableView!, viewForHeaderForSection section: Int) -> UIView!
     {
-        let key:String = settingsViewController.settingsReader.keyForSection(section);
+        let key: String? = settingsViewController.settingsReader.keyForSection(section);
         if key == "IASKLogo"
         {
             let imageName = "Icon.png"
@@ -179,11 +179,11 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     
     func tableView(tableView: UITableView!, cellForSpecifier specifier: IASKSpecifier!) -> UITableViewCell!
     {
-        let CellID : NSString = "CustomViewCell"
-        let cell : CustomViewCell = tableView.dequeueReusableCellWithIdentifier(CellID as String) as! CustomViewCell
+        let CellID: String = "CustomViewCell"
+        let cell: CustomViewCell = tableView.dequeueReusableCellWithIdentifier(CellID) as! CustomViewCell
         
-        let txt : [String]? = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
-            
+        let txt: [String]? = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
+        
         if  txt != nil
         {
             cell.textLabel!.text = txt?.description
@@ -197,7 +197,7 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
         return cell;
     }
     
-// MARK: - kIASKAppSettingChanged notification
+    // MARK: - kIASKAppSettingChanged notification
     
     func settingDidChange(notification: NSNotification!)
     {
@@ -218,21 +218,21 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     }
     
     
-// MARK: - UITextViewDelegate (for CustomViewCell)
+    // MARK: - UITextViewDelegate (for CustomViewCell)
     func textViewDidChange(textView: UITextView)
     {
         NSUserDefaults.standardUserDefaults().setObject(textView.text, forKey: "customCell")
         NSNotificationCenter.defaultCenter().postNotificationName(kIASKAppSettingChanged, object:"customCell", userInfo:nil)
     }
     
-
-// MARK: - UIPopoverControllerDelegate
+    
+    // MARK: - UIPopoverControllerDelegate
     func popoverControllerDidDismissPopover(popoverController: UIPopoverController)
     {
         self.currentPopoverController = nil
     }
     
-// MARK: -    
+    // MARK: -
     
     func settingsViewController(sender: IASKAppSettingsViewController!, buttonTappedForSpecifier specifier: IASKSpecifier!)
     {
