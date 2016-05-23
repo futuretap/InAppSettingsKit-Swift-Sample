@@ -13,8 +13,24 @@ import Foundation
 class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControllerDelegate,IASKSettingsDelegate
 {
     
-    var appSettingsViewController:IASKAppSettingsViewController = IASKAppSettingsViewController()
-    var tabAppSettingsViewController:IASKAppSettingsViewController = IASKAppSettingsViewController()
+    func appSettingsViewController() -> IASKAppSettingsViewController {
+        
+        let appSettingsViewController = IASKAppSettingsViewController()
+        appSettingsViewController.delegate = self
+        
+        return appSettingsViewController
+        
+    }
+    
+    func tabAppSettingsViewController() -> IASKAppSettingsViewController {
+        
+        let tabAppSettingsViewController = IASKAppSettingsViewController()
+        tabAppSettingsViewController.delegate = self
+        
+        return tabAppSettingsViewController
+        
+    }
+    
     var currentPopoverController: UIPopoverController?
     
     //@IBOutlet weak var tabAppSettingsViewController: IASKAppSettingsViewController?
@@ -23,15 +39,15 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
     
     @IBAction func showSettingsPush(sender: UIButton)
     {
-        self.appSettingsViewController.showDoneButton = false;
-        self.appSettingsViewController.navigationItem.rightBarButtonItem = nil;
-        self.navigationController?.pushViewController(self.appSettingsViewController, animated: true)
+        self.appSettingsViewController().showDoneButton = false;
+        self.appSettingsViewController().navigationItem.rightBarButtonItem = nil;
+        self.navigationController?.pushViewController(self.appSettingsViewController(), animated: true)
     }
     
     @IBAction func showSettingsModal(sender: UIButton)
     {
-        let aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController);
-        self.appSettingsViewController.showDoneButton = true;
+        let aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController());
+        self.appSettingsViewController().showDoneButton = true;
         self.presentViewController(aNavController, animated: true, completion: nil);
     }
     
@@ -43,8 +59,8 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
             return;
         }
         
-        self.appSettingsViewController.showDoneButton = false;
-        let aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController);
+        self.appSettingsViewController().showDoneButton = false;
+        let aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController());
         var popover: UIPopoverController? = nil
         popover = UIPopoverController(contentViewController: aNavController)
         popover!.delegate = self
@@ -58,11 +74,11 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
         let enabled = NSUserDefaults.standardUserDefaults().boolForKey("AutoConnect")
         if enabled
         {
-            self.tabAppSettingsViewController.hiddenKeys = nil
+            self.tabAppSettingsViewController().hiddenKeys = nil
         }
         else
         {
-            self.tabAppSettingsViewController.hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
+            self.tabAppSettingsViewController().hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
         }
 
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad
@@ -188,7 +204,7 @@ class MainViewController: UIViewController,UITextViewDelegate,UIPopoverControlle
         if notification.object?.description == "AutoConnect"
         {
             let activeController:IASKAppSettingsViewController = (self.tabBarController?.selectedIndex != nil) ?
-                self.tabAppSettingsViewController : self.appSettingsViewController
+                self.tabAppSettingsViewController() : self.appSettingsViewController()
             let enabled = NSUserDefaults.standardUserDefaults().objectForKey("AutoConnect") as? Bool
             if ( (enabled != nil) && enabled!)
             {
