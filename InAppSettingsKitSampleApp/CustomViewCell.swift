@@ -22,7 +22,7 @@ public class CustomViewCell: UITableViewCell
         super.init(coder: aDecoder)
     }
     
-    override public func setSelected(selected: CBool, animated: CBool)
+    override public func setSelected(selected: Bool, animated: Bool)
     {
         
     }
