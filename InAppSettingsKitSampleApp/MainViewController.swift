@@ -179,21 +179,30 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     
     func tableView(tableView: UITableView!, cellForSpecifier specifier: IASKSpecifier!) -> UITableViewCell!
     {
-        let CellID: String = "CustomViewCell"
-        let cell: CustomViewCell = tableView.dequeueReusableCellWithIdentifier(CellID) as! CustomViewCell
         
-        let txt: [String]? = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
+        var cell = tableView.dequeueReusableCellWithIdentifier(specifier.key() as String) as? CustomViewCell
+        
+        if cell == nil {
+            
+            cell = NSBundle.mainBundle().loadNibNamed("CustomViewCell", owner: self, options: nil).first as? CustomViewCell
+            
+        }
+        
+        let txt: String? = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? String
         
         if  txt != nil
         {
-            cell.textLabel!.text = txt?.description
+            cell!.textLabel!.text = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? String
         }
         else
         {
-            cell.textLabel!.text = (specifier.defaultValue()).description
+            cell!.textLabel!.text = specifier.defaultStringValue() as? String
         }
-        cell.textLabel?.delete(self)
-        cell.setNeedsDisplay()
+        
+        cell!.textView?.delegate = self
+        
+//        cell!.textLabel?.delete(self)
+        cell!.setNeedsDisplay()
         return cell;
     }
     
