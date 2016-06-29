@@ -274,7 +274,7 @@
 		</dict>
 		<dict>
 			<key>IASKViewControllerClass</key>
-			<string>CustomSubviewController</string>
+			<string>In_App_Settings_Kit.CustomSubviewController</string>
 			<key>IASKViewControllerSelector</key>
 			<string>init</string>
 			<key>Title</key>
