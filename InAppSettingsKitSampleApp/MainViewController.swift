@@ -86,11 +86,14 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
         let enabled = NSUserDefaults.standardUserDefaults().boolForKey("AutoConnect")
         if enabled
         {
-            self.tabAppSettingsViewController().hiddenKeys = nil
+            self.tabAppSettingsViewController().setHiddenKeys(nil, animated: false)
         }
         else
         {
-            self.tabAppSettingsViewController().hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
+            var keys = Set<NSObject>();
+            keys.insert("AutoConnectLogin")
+            keys.insert("AutoConnectPassword")
+            self.tabAppSettingsViewController().setHiddenKeys(keys, animated: false)
         }
     }
     
@@ -218,16 +221,19 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     {
         if notification.object?.description == "AutoConnect"
         {
-            let activeController:IASKAppSettingsViewController = (self.tabBarController?.selectedIndex != nil) ?
+            let activeController:IASKAppSettingsViewController = self.tabBarController!.selectedIndex == 1 ?
                 self.tabAppSettingsViewController() : self.appSettingsViewController()
             let enabled = NSUserDefaults.standardUserDefaults().objectForKey("AutoConnect") as? Bool
             if ( (enabled != nil) && enabled!)
             {
-                activeController.hiddenKeys = nil
+                activeController.setHiddenKeys(nil, animated: true)
             }
             else
             {
-                activeController.hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
+                var keys = Set<NSObject>();
+                keys.insert("AutoConnectLogin")
+                keys.insert("AutoConnectPassword")
+                activeController.setHiddenKeys(keys, animated: true)
             }
         }
     }
