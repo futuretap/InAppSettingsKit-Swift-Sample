@@ -25,11 +25,6 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     }
     
     func tabAppSettingsViewController() -> IASKAppSettingsViewController {
-        if _tabAppSettingsViewController == nil {
-            _tabAppSettingsViewController = IASKAppSettingsViewController()
-            _tabAppSettingsViewController!.delegate = self
-        }
-        
         return _tabAppSettingsViewController!
     }
     
@@ -73,6 +68,21 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     override internal func awakeFromNib()
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MainViewController.settingDidChange(_:)), name: kIASKAppSettingChanged, object: nil)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad
+        {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(MainViewController.showSettingsPopover(_:)))
+        }
+    }
+    
+    // MARK:View Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let barViewControllers = self.tabBarController?.viewControllers
+        let navigationController = (barViewControllers![1] as! UINavigationController)
+        _tabAppSettingsViewController = (navigationController.topViewController as! IASKAppSettingsViewController)
+        _tabAppSettingsViewController?.delegate = self
+        
         let enabled = NSUserDefaults.standardUserDefaults().boolForKey("AutoConnect")
         if enabled
         {
@@ -82,14 +92,8 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
         {
             self.tabAppSettingsViewController().hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
         }
-        
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad
-        {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(MainViewController.showSettingsPopover(_:)))
-        }
     }
     
-    // MARK:View Lifecycle
     override func viewWillDisappear(animated:Bool)
     {
         if (self.currentPopoverController != nil)

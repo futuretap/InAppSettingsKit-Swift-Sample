@@ -87,7 +87,7 @@
         <!--Settings-->
         <scene sceneID="pXJ-Un-WKn">
             <objects>
-                <tableViewController id="IDB-YN-xtY" userLabel="Settings" customClass="IASKAppSettingsViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="tabAppSettingsViewController" id="IDB-YN-xtY" userLabel="Settings" customClass="IASKAppSettingsViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="EEw-l1-TBz">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
