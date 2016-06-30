@@ -12,23 +12,25 @@ import Foundation
 
 class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControllerDelegate, IASKSettingsDelegate
 {
+    private var _appSettingsViewController : IASKAppSettingsViewController? = nil
+    private var _tabAppSettingsViewController : IASKAppSettingsViewController? = nil
     
     func appSettingsViewController() -> IASKAppSettingsViewController {
+        if _appSettingsViewController == nil {
+            _appSettingsViewController = IASKAppSettingsViewController()
+            _appSettingsViewController!.delegate = self
+        }
         
-        let appSettingsViewController = IASKAppSettingsViewController()
-        appSettingsViewController.delegate = self
-        
-        return appSettingsViewController
-        
+        return _appSettingsViewController!
     }
     
     func tabAppSettingsViewController() -> IASKAppSettingsViewController {
+        if _tabAppSettingsViewController == nil {
+            _tabAppSettingsViewController = IASKAppSettingsViewController()
+            _tabAppSettingsViewController!.delegate = self
+        }
         
-        let tabAppSettingsViewController = IASKAppSettingsViewController()
-        tabAppSettingsViewController.delegate = self
-        
-        return tabAppSettingsViewController
-        
+        return _tabAppSettingsViewController!
     }
     
     var currentPopoverController: UIPopoverController?
