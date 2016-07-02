@@ -197,21 +197,21 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
             
         }
         
-        let txt: String? = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? String
+        let txt: String? = NSUserDefaults.standardUserDefaults().stringForKey(specifier.key())
         
         if  txt != nil
         {
-            cell!.textLabel!.text = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? String
+            cell!.textView!.text = NSUserDefaults.standardUserDefaults().stringForKey(specifier.key())
         }
         else
         {
-            cell!.textLabel!.text = specifier.defaultStringValue() as? String
+            cell!.textView!.text = specifier.defaultStringValue() as? String
         }
         
         cell!.textView?.delegate = self
         
 //        cell!.textLabel?.delete(self)
-        cell!.setNeedsDisplay()
+//        cell!.setNeedsDisplay()
         return cell;
     }
     
@@ -223,8 +223,8 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
         {
             let activeController:IASKAppSettingsViewController = self.tabBarController!.selectedIndex == 1 ?
                 self.tabAppSettingsViewController() : self.appSettingsViewController()
-            let enabled = NSUserDefaults.standardUserDefaults().objectForKey("AutoConnect") as? Bool
-            if ( (enabled != nil) && enabled!)
+            let enabled = NSUserDefaults.standardUserDefaults().boolForKey("AutoConnect")
+            if (enabled)
             {
                 activeController.setHiddenKeys(nil, animated: true)
             }
@@ -265,8 +265,8 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
         }
         else if specifier.key() == "ButtonDemoAction2"
         {
-            let newTitle = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
-            if newTitle?.description == "Logout"
+            let newTitle = NSUserDefaults.standardUserDefaults().stringForKey(specifier.key())
+            if newTitle == "Logout"
             {
                 NSUserDefaults.standardUserDefaults().setObject("Login", forKey: specifier.key())
             }
