@@ -12,23 +12,20 @@ import Foundation
 
 class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControllerDelegate, IASKSettingsDelegate
 {
+    private var _appSettingsViewController : IASKAppSettingsViewController? = nil
+    private var _tabAppSettingsViewController : IASKAppSettingsViewController? = nil
     
     func appSettingsViewController() -> IASKAppSettingsViewController {
+        if _appSettingsViewController == nil {
+            _appSettingsViewController = IASKAppSettingsViewController()
+            _appSettingsViewController!.delegate = self
+        }
         
-        let appSettingsViewController = IASKAppSettingsViewController()
-        appSettingsViewController.delegate = self
-        
-        return appSettingsViewController
-        
+        return _appSettingsViewController!
     }
     
     func tabAppSettingsViewController() -> IASKAppSettingsViewController {
-        
-        let tabAppSettingsViewController = IASKAppSettingsViewController()
-        tabAppSettingsViewController.delegate = self
-        
-        return tabAppSettingsViewController
-        
+        return _tabAppSettingsViewController!
     }
     
     var currentPopoverController: UIPopoverController?
@@ -71,16 +68,7 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     override internal func awakeFromNib()
     {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MainViewController.settingDidChange(_:)), name: kIASKAppSettingChanged, object: nil)
-        let enabled = NSUserDefaults.standardUserDefaults().boolForKey("AutoConnect")
-        if enabled
-        {
-            self.tabAppSettingsViewController().hiddenKeys = nil
-        }
-        else
-        {
-            self.tabAppSettingsViewController().hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
-        }
-        
+
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad
         {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(MainViewController.showSettingsPopover(_:)))
@@ -88,6 +76,27 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     }
     
     // MARK:View Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let barViewControllers = self.tabBarController?.viewControllers
+        let navigationController = (barViewControllers![1] as! UINavigationController)
+        _tabAppSettingsViewController = (navigationController.topViewController as! IASKAppSettingsViewController)
+        _tabAppSettingsViewController?.delegate = self
+        
+        let enabled = NSUserDefaults.standardUserDefaults().boolForKey("AutoConnect")
+        if enabled
+        {
+            self.tabAppSettingsViewController().setHiddenKeys(nil, animated: false)
+        }
+        else
+        {
+            var keys = Set<NSObject>();
+            keys.insert("AutoConnectLogin")
+            keys.insert("AutoConnectPassword")
+            self.tabAppSettingsViewController().setHiddenKeys(keys, animated: false)
+        }
+    }
+    
     override func viewWillDisappear(animated:Bool)
     {
         if (self.currentPopoverController != nil)
@@ -188,21 +197,21 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
             
         }
         
-        let txt: String? = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? String
+        let txt: String? = NSUserDefaults.standardUserDefaults().stringForKey(specifier.key())
         
         if  txt != nil
         {
-            cell!.textLabel!.text = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? String
+            cell!.textView!.text = NSUserDefaults.standardUserDefaults().stringForKey(specifier.key())
         }
         else
         {
-            cell!.textLabel!.text = specifier.defaultStringValue() as? String
+            cell!.textView!.text = specifier.defaultStringValue() as? String
         }
         
         cell!.textView?.delegate = self
         
 //        cell!.textLabel?.delete(self)
-        cell!.setNeedsDisplay()
+//        cell!.setNeedsDisplay()
         return cell;
     }
     
@@ -212,16 +221,19 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     {
         if notification.object?.description == "AutoConnect"
         {
-            let activeController:IASKAppSettingsViewController = (self.tabBarController?.selectedIndex != nil) ?
+            let activeController:IASKAppSettingsViewController = self.tabBarController!.selectedIndex == 1 ?
                 self.tabAppSettingsViewController() : self.appSettingsViewController()
-            let enabled = NSUserDefaults.standardUserDefaults().objectForKey("AutoConnect") as? Bool
-            if ( (enabled != nil) && enabled!)
+            let enabled = NSUserDefaults.standardUserDefaults().boolForKey("AutoConnect")
+            if (enabled)
             {
-                activeController.hiddenKeys = nil
+                activeController.setHiddenKeys(nil, animated: true)
             }
             else
             {
-                activeController.hiddenKeys = NSSet(objects: ["AutoConnectLogin", "AutoConnectPassword"]) as Set<NSObject>
+                var keys = Set<NSObject>();
+                keys.insert("AutoConnectLogin")
+                keys.insert("AutoConnectPassword")
+                activeController.setHiddenKeys(keys, animated: true)
             }
         }
     }
@@ -249,12 +261,12 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
         {
             let alert = UIAlertController(title: "Demo Action 1 called", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
+            sender.presentViewController(alert, animated: true, completion: nil)
         }
         else if specifier.key() == "ButtonDemoAction2"
         {
-            let newTitle = NSUserDefaults.standardUserDefaults().objectForKey(specifier.key()) as? [String]
-            if newTitle?.description == "Logout"
+            let newTitle = NSUserDefaults.standardUserDefaults().stringForKey(specifier.key())
+            if newTitle == "Logout"
             {
                 NSUserDefaults.standardUserDefaults().setObject("Login", forKey: specifier.key())
             }
