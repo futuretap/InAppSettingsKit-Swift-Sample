@@ -261,7 +261,7 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
         {
             let alert = UIAlertController(title: "Demo Action 1 called", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
+            sender.presentViewController(alert, animated: true, completion: nil)
         }
         else if specifier.key() == "ButtonDemoAction2"
         {
