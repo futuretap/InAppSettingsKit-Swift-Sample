@@ -34,14 +34,14 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     
     
     
-    @IBAction func showSettingsPush(sender: UIButton)
+    @IBAction func showSettingsPush(_ sender: UIButton)
     {
         self.appSettingsViewController().showDoneButton = false;
         self.appSettingsViewController().navigationItem.rightBarButtonItem = nil;
         self.navigationController?.pushViewController(self.appSettingsViewController(), animated: true)
     }
     
-    @IBAction func showSettingsModal(sender: UIButton)
+    @IBAction func showSettingsModal(_ sender: UIButton)
     {
         let aNavController:UINavigationController = UINavigationController(rootViewController: self.appSettingsViewController());
         self.appSettingsViewController().showDoneButton = true;
