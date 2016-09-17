@@ -161,7 +161,7 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
             label.textAlignment = NSTextAlignment.center
             label.textColor = UIColor.red
             label.shadowColor = UIColor.white
-            label.shadowOffset = CGSizeMake(0, 1)
+            label.shadowOffset = CGSize(width: 0, height: 1)
             label.numberOfLines = 0
             label.font = UIFont.boldSystemFont(ofSize: 16)
             label.text = settingsViewController.settingsReader.title(forSection: section)
@@ -217,7 +217,7 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     
     // MARK: - kIASKAppSettingChanged notification
     
-    func settingDidChange(notification: NSNotification!)
+    @objc private func settingDidChange(notification: NSNotification!)
     {
         if (notification.object as AnyObject).description == "AutoConnect"
         {
@@ -240,7 +240,7 @@ class MainViewController: UIViewController, UITextViewDelegate, UIPopoverControl
     
     
     // MARK: - UITextViewDelegate (for CustomViewCell)
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         UserDefaults.standard.set(textView.text, forKey: "customCell")
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: kIASKAppSettingChanged), object:"customCell")

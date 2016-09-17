@@ -11,7 +11,7 @@ import Foundation
 class CustomSubviewController: UIViewController
 {
     init() {
-        super.init(nibName: "CustomSubviewController", bundle: NSBundle.mainBundle())
+        super.init(nibName: "CustomSubviewController", bundle: Bundle.main)
     }
     
     required init?(coder aDecoder: NSCoder) {
