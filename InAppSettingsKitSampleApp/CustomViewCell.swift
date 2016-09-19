@@ -9,7 +9,7 @@
 import Foundation
 
 
-public class CustomViewCell: UITableViewCell
+open class CustomViewCell: UITableViewCell
 {
     @IBOutlet weak var textView: UITextView?
 
@@ -22,7 +22,7 @@ public class CustomViewCell: UITableViewCell
         super.init(coder: aDecoder)
     }
     
-    override public func setSelected(selected: Bool, animated: Bool)
+    override open func setSelected(_ selected: Bool, animated: Bool)
     {
         
     }
